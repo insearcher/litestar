@@ -1,6 +1,7 @@
 from litestar import Litestar
 from litestar.di import Provide
 from litestar.openapi import OpenAPIConfig
+from litestar.openapi.plugins import SwaggerRenderPlugin
 from src.core.config import settings
 from src.db.session import provide_db_session, sqlalchemy_plugin
 from src.domain.users.controllers import UserController
@@ -12,6 +13,7 @@ app = Litestar(
         title=settings.APP_TITLE,
         version=settings.APP_VERSION,
         description=settings.APP_DESCRIPTION,
+        render_plugins=[SwaggerRenderPlugin()],
     ),
     debug=settings.DEBUG,
     dependencies={"db_session": Provide(provide_db_session)},
