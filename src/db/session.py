@@ -1,8 +1,9 @@
 from typing import AsyncGenerator
-from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
-from advanced_alchemy.extensions.litestar import SQLAlchemyInitPlugin
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from advanced_alchemy.config import EngineConfig
+from advanced_alchemy.extensions.litestar import (SQLAlchemyAsyncConfig,
+                                                  SQLAlchemyInitPlugin)
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import settings
 
@@ -13,11 +14,12 @@ engine_config = EngineConfig(echo=settings.DEBUG)
 sqlalchemy_config = SQLAlchemyAsyncConfig(
     connection_string=settings.DATABASE_URL,
     engine_config=engine_config,
-    create_all=False  # Полагаемся только на миграции для управления схемой
+    create_all=False,  # Полагаемся только на миграции для управления схемой
 )
 
 # Инициализация плагина SQLAlchemy для Litestar
 sqlalchemy_plugin = SQLAlchemyInitPlugin(config=sqlalchemy_config)
+
 
 # Провайдер сессии для внедрения зависимостей
 async def provide_db_session() -> AsyncGenerator[AsyncSession, None]:

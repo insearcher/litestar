@@ -1,18 +1,21 @@
-from typing import List, Optional
+from typing import List
 
-from litestar import Controller, get, post, put, delete
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from litestar import Controller, delete, get, post, put
 from litestar.di import Provide
 from litestar.params import Parameter
 from litestar.status_codes import HTTP_201_CREATED, HTTP_204_NO_CONTENT
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.db.models import User
 from src.db.repositories import UserRepository
-from src.domain.users.schemas import UserSchema, UserCreateSchema, UserUpdateSchema
+from src.domain.users.schemas import (UserCreateSchema, UserSchema,
+                                      UserUpdateSchema)
+
 
 async def provide_user_repo(db_session: AsyncSession) -> UserRepository:
     """Провайдер репозитория пользователей."""
     return UserRepository(session=db_session)
+
 
 class UserController(Controller):
     """Контроллер для управления пользователями."""
@@ -21,7 +24,9 @@ class UserController(Controller):
     dependencies = {"user_repo": Provide(provide_user_repo)}
 
     @post(status_code=HTTP_201_CREATED)
-    async def create_user(self, user_repo: UserRepository, data: UserCreateSchema) -> UserSchema:
+    async def create_user(
+        self, user_repo: UserRepository, data: UserCreateSchema
+    ) -> UserSchema:
         """Создание нового пользователя."""
         user = User(
             name=data.name,
@@ -55,7 +60,11 @@ class UserController(Controller):
         ]
 
     @get("/{user_id:int}")
-    async def get_user(self, user_repo: UserRepository, user_id: int = Parameter(title="ID пользователя")) -> UserSchema:
+    async def get_user(
+        self,
+        user_repo: UserRepository,
+        user_id: int = Parameter(title="ID пользователя"),
+    ) -> UserSchema:
         """Получение данных одного пользователя."""
         user = await user_repo.get(user_id)
         return UserSchema(
@@ -71,7 +80,7 @@ class UserController(Controller):
         self,
         user_repo: UserRepository,
         data: UserUpdateSchema,
-        user_id: int = Parameter(title="ID пользователя")
+        user_id: int = Parameter(title="ID пользователя"),
     ) -> UserSchema:
         """Обновление данных пользователя."""
         user = await user_repo.get(user_id)
@@ -98,7 +107,7 @@ class UserController(Controller):
     async def delete_user(
         self,
         user_repo: UserRepository,
-        user_id: int = Parameter(title="ID пользователя")
+        user_id: int = Parameter(title="ID пользователя"),
     ) -> None:
         """Удаление пользователя."""
         await user_repo.delete(user_id)

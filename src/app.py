@@ -1,7 +1,6 @@
 from litestar import Litestar
-from litestar.openapi import OpenAPIConfig
 from litestar.di import Provide
-
+from litestar.openapi import OpenAPIConfig
 from src.core.config import settings
 from src.db.session import provide_db_session, sqlalchemy_plugin
 from src.domain.users.controllers import UserController
