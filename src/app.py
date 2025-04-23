@@ -13,8 +13,6 @@ app = Litestar(
         title=settings.APP_TITLE,
         version=settings.APP_VERSION,
         description=settings.APP_DESCRIPTION,
-        path="/openapi.json",
-        root_schema_site="swagger",  # Использовать Swagger UI по умолчанию
     ),
     debug=settings.DEBUG,
     dependencies={"db_session": Provide(provide_db_session)},
