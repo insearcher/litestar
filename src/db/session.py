@@ -13,7 +13,7 @@ engine_config = EngineConfig(echo=settings.DEBUG)
 sqlalchemy_config = SQLAlchemyAsyncConfig(
     connection_string=settings.DATABASE_URL,
     engine_config=engine_config,
-    create_all=True  # Автоматически создавать таблицы при старте
+    create_all=False  # Полагаемся только на миграции для управления схемой
 )
 
 # Инициализация плагина SQLAlchemy для Litestar
