@@ -3,14 +3,12 @@ services:
     image: postgres:15
     volumes:
       - pgdata:/var/lib/postgresql/data
-    # Не экспортируем порт базы данных наружу для безопасности
-    # Он будет доступен только внутри сети docker
     expose:
       - "5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=userdb
+      - POSTGRES_DB=user
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -28,11 +26,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/userdb
-      - DEBUG=False
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/user
+      - DEBUG=True
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      test: ["CMD", "curl", "-f", "http://db:8000/swagger"]
       interval: 30s
       timeout: 10s
       retries: 3

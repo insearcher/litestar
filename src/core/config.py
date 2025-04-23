@@ -12,7 +12,7 @@ class AppSettings(BaseSettings):
 
     # Настройки базы данных
     DATABASE_URL: str = os.getenv(
-        "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/userdb"
+        "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/user"
     )
 
     # Настройки приложения
@@ -21,10 +21,6 @@ class AppSettings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
 
-    # Настройки для OpenAPI
-    OPENAPI_URL: str = "/openapi.json"
-    DOCS_URL: str = "/docs"
-    REDOC_URL: str = "/redoc"
 
     class Config:
         env_file = ".env"

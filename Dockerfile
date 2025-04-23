@@ -57,5 +57,5 @@ USER appuser
 # Entrypoint для предварительных действий
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
 
-# Запуск приложения с использованием Granian для лучшей производительности
-CMD ["granian", "--interface", "asgi", "src.app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+# Запуск приложения
+CMD ["uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000"]

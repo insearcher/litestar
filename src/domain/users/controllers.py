@@ -34,15 +34,17 @@ class UserController(Controller):
             password=data.password,
         )
         await user_repo.add(user)
-        await user_repo.commit()
 
-        return UserSchema(
+        result = UserSchema(
             id=user.id,
             name=user.name,
             surname=user.surname,
             created_at=user.created_at,
             updated_at=user.updated_at,
         )
+
+        await user_repo.session.commit()
+        return result
 
     @get()
     async def list_users(self, user_repo: UserRepository) -> List[UserSchema]:
@@ -91,17 +93,18 @@ class UserController(Controller):
             user.surname = data.surname
         if data.password is not None:
             user.password = data.password
-
         await user_repo.update(user)
-        await user_repo.commit()
 
-        return UserSchema(
+        result = UserSchema(
             id=user.id,
             name=user.name,
             surname=user.surname,
             created_at=user.created_at,
             updated_at=user.updated_at,
         )
+        await user_repo.session.commit()
+
+        return result
 
     @delete("/{user_id:int}", status_code=HTTP_204_NO_CONTENT)
     async def delete_user(
@@ -111,4 +114,4 @@ class UserController(Controller):
     ) -> None:
         """Удаление пользователя."""
         await user_repo.delete(user_id)
-        await user_repo.commit()
+        await user_repo.session.commit()
