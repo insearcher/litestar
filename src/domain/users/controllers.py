@@ -29,7 +29,7 @@ class UserController(Controller):
             password=data.password,
         )
         await user_repo.add(user)
-        await user_repo.session.commit()
+        await user_repo.commit()
         
         return UserSchema(
             id=user.id,
@@ -83,7 +83,7 @@ class UserController(Controller):
         if data.password is not None:
             user.password = data.password
             
-        await user_repo.session.commit()
+        await user_repo.commit()
         
         return UserSchema(
             id=user.id,
@@ -101,4 +101,4 @@ class UserController(Controller):
     ) -> None:
         """Удаление пользователя."""
         await user_repo.delete(user_id)
-        await user_repo.session.commit()
+        await user_repo.commit()

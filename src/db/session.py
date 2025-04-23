@@ -1,20 +1,26 @@
 from typing import AsyncGenerator
-
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from advanced_alchemy.extensions.litestar import SQLAlchemyAsyncConfig
+from advanced_alchemy.extensions.litestar import SQLAlchemyInitPlugin
+from sqlalchemy.ext.asyncio import AsyncSession
+from advanced_alchemy.config import EngineConfig
 
 from src.core.config import settings
 
-# Создаем асинхронный движок
-engine = create_async_engine(settings.DATABASE_URL)
+# Конфигурация для движка SQLAlchemy
+engine_config = EngineConfig(echo=settings.DEBUG)
 
-# Создаем фабрику асинхронных сессий
-async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
+# Конфигурация SQLAlchemy для асинхронного подключения
+sqlalchemy_config = SQLAlchemyAsyncConfig(
+    connection_string=settings.DATABASE_URL,
+    engine_config=engine_config,
+    create_all=True  # Автоматически создавать таблицы при старте
+)
+
+# Инициализация плагина SQLAlchemy для Litestar
+sqlalchemy_plugin = SQLAlchemyInitPlugin(config=sqlalchemy_config)
 
 # Провайдер сессии для внедрения зависимостей
 async def provide_db_session() -> AsyncGenerator[AsyncSession, None]:
     """Провайдер сессии БД для внедрения зависимостей."""
-    async with async_session_factory() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
+    async with sqlalchemy_config.create_session_factory()() as session:
+        yield session

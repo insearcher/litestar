@@ -3,7 +3,7 @@ from litestar.openapi import OpenAPIConfig
 from litestar.di import Provide
 
 from src.core.config import settings
-from src.db.session import provide_db_session
+from src.db.session import provide_db_session, sqlalchemy_plugin
 from src.domain.users.controllers import UserController
 
 # Инициализация приложения LiteStar
@@ -18,4 +18,5 @@ app = Litestar(
     ),
     debug=settings.DEBUG,
     dependencies={"db_session": Provide(provide_db_session)},
+    plugins=[sqlalchemy_plugin],
 )

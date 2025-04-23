@@ -26,7 +26,7 @@ REST API на базе LiteStar (Python 3.12) с CRUD-операциями дл�
 
 3. Применить миграции:
    ```
-   docker-compose exec app litestar database upgrade
+   docker-compose exec app alembic upgrade head
    ```
 
 4. API будет доступно по адресу: http://localhost:8000
@@ -59,7 +59,7 @@ REST API на базе LiteStar (Python 3.12) с CRUD-операциями дл�
 
 6. Применить миграции:
    ```
-   poetry run litestar database upgrade
+   poetry run alembic upgrade head
    ```
 
 7. API будет доступно по адресу: http://localhost:8000
