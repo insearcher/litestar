@@ -5,8 +5,10 @@ services:
     image: postgres:15
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # Не экспортируем порт базы данных наружу для безопасности
+    # Он будет доступен только внутри сети docker
+    expose:
+      - "5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -16,6 +18,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+    networks:
+      - app-network
 
   app:
     build: .
@@ -27,6 +32,20 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/userdb
       - DEBUG=False
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - app-network
 
 volumes:
   pgdata:
+    name: litestar-pgdata
+
+networks:
+  app-network:
+    driver: bridge
